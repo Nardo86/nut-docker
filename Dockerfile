@@ -6,7 +6,8 @@ ENV PORT auto
 ENV POLLFREQ 5
 ENV DESC UPS
 
-RUN apt-get update && apt-get -y install nut-server
+RUN apt-get update 
+RUN apt-get -y install nut-server
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
