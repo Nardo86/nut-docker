@@ -22,16 +22,13 @@ It is also possibile to insert an user, for example it's possibile to make the s
 
 Environment variable used for the configuration
 
-**NAME**		a simple name for your ups 		(default: ups)
-
-**DRIVER**		the driver to use*				(default: usbhid-ups)
-
-**PORT**		device port 					(default: auto)
-
-**POLLFREQ**	polling Interval 				(default: 5)
-
-**DESC**		full description for your ups  	(default: UPS)
-
-**USERSSTRING**	single line users configuration	(default: #)
+Variable|Description|Default
+--------|-----------|-------
+NAME|a simple name for your ups|ups
+DRIVER|the driver to use*|usbhid-ups
+PORT|device port|auto
+POLLFREQ|polling Interval|5
+DESC|full description for your ups|UPS
+USERSSTRING|single line users configuration|#
 
 *see https://networkupstools.org/stable-hcl.html for compatibility list
