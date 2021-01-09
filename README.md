@@ -1,9 +1,13 @@
-# nut-docker
-
-**NUT-SERVER**
+# NUT-SERVER
 
 This is a simple debian image with the nut-server package installed.
+
 Image available at https://hub.docker.com/r/nardo86/nut-server
+
+Feel free to consider donating if my work helped you! https://paypal.me/ErosNardi
+
+_Tested on my Raspberry Pi 4 on a APC Back-UPS ES 700_
+
 
 **USAGE**
 
