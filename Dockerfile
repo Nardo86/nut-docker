@@ -1,5 +1,6 @@
 FROM debian:buster-slim
 
+ENV TZ Etc/UTC
 ENV NAME ups
 ENV DRIVER usbhid-ups
 ENV PORT auto
@@ -9,8 +10,7 @@ ENV USERSSTRING #
 
 #Installing default packages
 RUN apt-get update 
-RUN apt-get install -y  \
-nut-server
+RUN apt-get install -y  nut-server
 
 #Apply configuration
 RUN sed -i 's/MODE=none/MODE=netserver/g' /etc/nut/nut.conf \
