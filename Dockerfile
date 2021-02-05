@@ -8,7 +8,8 @@ ENV DESC UPS
 ENV USERSSTRING #
 
 #Installing default packages
-RUN apt-get update && apt-get install -y  nut-server
+RUN apt-get update
+RUN apt-get install -y  nut-server
 
 #Apply configuration
 RUN sed -i 's/MODE=none/MODE=netserver/g' /etc/nut/nut.conf \
