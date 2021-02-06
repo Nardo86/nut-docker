@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-ENV TZ=Etc/UTC
+ENV TZ Etc/UTC
 ENV NAME ups
 ENV DRIVER usbhid-ups
 ENV PORT auto
@@ -9,7 +9,7 @@ ENV DESC UPS
 ENV USERSSTRING #
 
 #Installing default packages
-RUN echo $TZ > /etc/timezone && apt-get update 
+RUN apt-get update 
 RUN apt-get install -y  nut-server
 
 #Apply configuration
