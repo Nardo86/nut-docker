@@ -20,6 +20,7 @@ RUN sed -i 's/MODE=none/MODE=netserver/g' /etc/nut/nut.conf \
 && chgrp nut /etc/nut/*
 
 COPY entrypoint.sh /
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 3493
