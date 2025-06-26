@@ -1,26 +1,33 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
-ENV TZ Etc/UTC
-ENV NAME ups
-ENV DRIVER usbhid-ups
-ENV PORT auto
-ENV POLLFREQ 5
-ENV DESC UPS
-ENV USERSSTRING #
+# Environment variables with defaults
+ENV TZ=Etc/UTC
+ENV NAME=ups
+ENV DRIVER=usbhid-ups
+ENV PORT=auto
+ENV POLLFREQ=5
+ENV DESC="UPS"
+ENV USERSSTRING="#"
 
-#Installing default packages
-RUN apt-get update
-RUN apt-get install -y nut-server
+# Install NUT server and clean up
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        nut-server \
+        tzdata \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-#Apply configuration
+# Set up basic NUT configuration
 RUN sed -i 's/MODE=none/MODE=netserver/g' /etc/nut/nut.conf \
-&& /bin/echo "LISTEN 0.0.0.0 3493" >> /etc/nut/upsd.conf \
-&& /bin/echo -e "[$NAME] \n  driver = $DRIVER \n  port = $PORT \n  pollfreq = $POLLFREQ \n  desc = $DESC" >> /etc/nut/ups.conf \
-&& /bin/echo -e "$USERSSTRING" >> /etc/nut/upsd.users \
-&& chgrp nut /etc/nut/*
+    && echo "LISTEN 0.0.0.0 3493" >> /etc/nut/upsd.conf
 
-COPY entrypoint.sh /
+# Copy and set entrypoint
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+
+# Create directory for runtime configuration
+RUN mkdir -p /var/run/nut && chown nut:nut /var/run/nut
 
 EXPOSE 3493
+
+ENTRYPOINT ["/entrypoint.sh"]
