@@ -4,10 +4,9 @@ A lightweight containerized Network UPS Tools (NUT) server built on Debian, desi
 
 ## ⚠️ Project Status
 
-This project is **community-maintained** and primarily tested on Raspberry Pi environments. While functional and stable:
+This project is **community-maintained** and no more tested. While functional and stable:
 
 - **Multi-Architecture**: Supports ARM32, ARM64, and AMD64 platforms
-- **Testing**: Primarily tested on Raspberry Pi 4 with APC Back-UPS ES 700
 - **Updates**: Automated builds ensure latest NUT server versions
 - **Support**: Community-based support via GitHub issues
 
@@ -17,7 +16,7 @@ This project is **community-maintained** and primarily tested on Raspberry Pi en
 - 🌐 **Network Monitoring** - NUT server accessible across your network (port 3493)
 - 🔧 **Easy Configuration** - Environment variable based setup
 - 🏠 **Home Server Ready** - Perfect for Raspberry Pi, home labs, and NAS systems
-- 📱 **Client Compatible** - Works with Synology NAS, pfSense, and other NUT clients
+- 📱 **Client Compatible** - Works with Synology NAS, HomeAssistant, and other NUT clients
 - 🐳 **Multi-Architecture** - Native support for ARM32, ARM64, and AMD64
 
 ## Quick Start
@@ -96,23 +95,9 @@ For Synology NAS compatibility:
   upsmon slave'
 ```
 
-For pfSense compatibility:
-```bash
--e USERSSTRING='[admin]
-  password = your_password
-  actions = SET
-  instcmds = ALL'
-```
-
 ## Supported UPS Models
 
 This container supports most USB UPS devices. Check the [NUT Hardware Compatibility List](https://networkupstools.org/stable-hcl.html) for your specific model.
-
-**Tested with:**
-- APC Back-UPS ES 700
-- APC Smart-UPS series
-- CyberPower CP1500PFCLCD
-- Eaton 5S series
 
 ## Troubleshooting
 
