@@ -1,157 +1,88 @@
 # NUT Server Docker Container
 
-A lightweight containerized Network UPS Tools (NUT) server built on Debian, designed for monitoring and managing UPS devices across your network infrastructure.
+Containerized [Network UPS Tools](https://networkupstools.org/) server on Debian,
+for monitoring USB UPS devices over the network (port 3493). Multi-arch:
+`linux/amd64`, `linux/arm64`, `linux/arm/v7`. Tested on Raspberry Pi 4.
 
-## ⚠️ Project Status
-
-This project is **community-maintained** and no more tested. While functional and stable:
-
-- **Multi-Architecture**: Supports ARM32, ARM64, and AMD64 platforms
-- **Updates**: Automated builds ensure latest NUT server versions
-- **Support**: Community-based support via GitHub issues
-
-## Features
-
-- 🔌 **USB UPS Support** - Direct USB device connectivity for most UPS models
-- 🌐 **Network Monitoring** - NUT server accessible across your network (port 3493)
-- 🔧 **Easy Configuration** - Environment variable based setup
-- 🏠 **Home Server Ready** - Perfect for Raspberry Pi, home labs, and NAS systems
-- 📱 **Client Compatible** - Works with Synology NAS, HomeAssistant, and other NUT clients
-- 🐳 **Multi-Architecture** - Native support for ARM32, ARM64, and AMD64
+> **Status:** community-maintained, no active testing. Functional and stable
+> for the author's setup (Raspberry Pi 4 + APC USB UPS). Issues and PRs welcome.
 
 ## Quick Start
 
-### Basic Usage
-```bash
-docker run -d \
-  --name=nut-server \
-  -p 3493:3493 \
-  --device=/dev/bus/usb/001/005 \
-  --restart unless-stopped \
-  nardo86/nut-server
-```
-
-### With Custom Configuration
-```bash
-docker run -d \
-  --name=nut-server \
-  -p 3493:3493 \
-  --device=/dev/bus/usb/001/005 \
-  -e NAME="office-ups" \
-  -e DESC="Office APC UPS" \
-  -e POLLFREQ=10 \
-  --restart unless-stopped \
-  nardo86/nut-server
-```
-
-### Docker Compose
 ```yaml
-version: '3.8'
 services:
   nut-server:
-    image: nardo86/nut-server
+    image: nardo86/nut-server:latest
     container_name: nut-server
     ports:
       - "3493:3493"
     devices:
-      - "/dev/bus/usb/001/005:/dev/bus/usb/001/005"
+      - "/dev/bus/usb/001/005:/dev/bus/usb/001/005"  # see "Find your UPS" below
     environment:
-      - NAME=home-ups
-      - DESC=Home APC Back-UPS ES 700
-      - POLLFREQ=5
-      - TZ=Europe/Rome
+      NAME: home-ups
+      DESC: Home APC Back-UPS ES 700
+      POLLFREQ: 5
+      TZ: Europe/Rome
     restart: unless-stopped
+```
+
+Or as a one-shot `docker run`:
+
+```bash
+docker run -d --name nut-server -p 3493:3493 \
+  --device=/dev/bus/usb/001/005 \
+  --restart unless-stopped \
+  nardo86/nut-server:latest
 ```
 
 ## Configuration
 
-### Environment Variables
+| Variable      | Description                  | Default      |
+|---------------|------------------------------|--------------|
+| `NAME`        | UPS identifier               | `ups`        |
+| `DRIVER`      | NUT driver                   | `usbhid-ups` |
+| `PORT`        | Device port                  | `auto`       |
+| `POLLFREQ`    | Polling interval (s)         | `5`          |
+| `DESC`        | UPS description              | `UPS`        |
+| `USERSSTRING` | NUT users block (see below)  | `#` (none)   |
+| `TZ`          | Timezone                     | `Etc/UTC`    |
 
-| Variable | Description | Default | Example |
-|----------|-------------|---------|---------|
-| `NAME` | UPS identifier name | `ups` | `office-ups` |
-| `DRIVER` | UPS driver to use | `usbhid-ups` | `blazer_usb` |
-| `PORT` | Device port/path | `auto` | `/dev/ttyUSB0` |
-| `POLLFREQ` | Polling interval (seconds) | `5` | `10` |
-| `DESC` | UPS description | `UPS` | `Office APC UPS` |
-| `USERSSTRING` | User configuration | `#` | See below |
-| `TZ` | Timezone | `Etc/UTC` | `Europe/Rome` |
+### Find your UPS
 
-### Finding Your UPS Device
-
-Use `lsusb` to identify your UPS device:
 ```bash
 lsusb
-# Output: Bus 001 Device 005: ID 051d:0002 American Power Conversion UPS
-# Use: --device=/dev/bus/usb/001/005
+# Bus 001 Device 005: ID 051d:0002 American Power Conversion UPS
+#     ^^^        ^^^
+# → --device=/dev/bus/usb/001/005
 ```
 
-### User Configuration
+### Synology / remote monitoring users
 
-For Synology NAS compatibility:
 ```bash
--e USERSSTRING='[monuser]
+USERSSTRING='[monuser]
   password = secret
   upsmon slave'
 ```
 
-## Supported UPS Models
-
-This container supports most USB UPS devices. Check the [NUT Hardware Compatibility List](https://networkupstools.org/stable-hcl.html) for your specific model.
+Compatible drivers: see the [NUT Hardware Compatibility List](https://networkupstools.org/stable-hcl.html).
+Common alternatives to `usbhid-ups`: `blazer_usb`, `nutdrv_qx`.
 
 ## Troubleshooting
 
-### Device Not Found
-- Verify UPS is connected via USB
-- Check device path with `lsusb`
-- Ensure container has device access permissions
+- **Device not found:** check `lsusb` on the host, verify the `--device` path,
+  ensure the container has access (no `--user` overrides, USB cgroup allowed).
+- **Connection refused on 3493:** verify port mapping and host firewall.
+- **Driver errors in logs:** wrong driver for your model — try `blazer_usb` or
+  `nutdrv_qx`.
 
-### Connection Issues
-- Verify port 3493 is accessible
-- Check firewall settings
-- Ensure NUT client configuration matches server settings
+## Notes
 
-### Driver Issues
-- Check [NUT compatibility list](https://networkupstools.org/stable-hcl.html)
-- Try different drivers (e.g., `blazer_usb`, `nutdrv_qx`)
-- Monitor container logs for error messages
+- **NUT version** tracks whatever Debian stable ships (currently bookworm),
+  not the upstream latest.
+- **Built with help from Claude (Anthropic).** Review the configuration before
+  production use. No warranty.
+- Image: <https://hub.docker.com/r/nardo86/nut-server>
 
-## Image Repository
+## Support
 
-Available at: https://hub.docker.com/r/nardo86/nut-server
-
-## ⚠️ AI Disclaimer
-
-This project was developed with the assistance of Claude AI (Anthropic). While functional, please be aware that:
-
-- **Security considerations**: The configuration may not be optimized for production environments
-- **Best practices**: Some settings might not follow enterprise-grade security standards  
-- **Testing required**: Thoroughly test in your environment before production use
-- **No warranty**: Use at your own risk - review all configurations before deployment
-- **Community input welcome**: Issues and improvements are encouraged via GitHub issues/PRs
-
-**Recommendation**: Have a security professional review the setup before production deployment.
-
-## Support & Donations
-
-This is a community project maintained on a volunteer basis. 
-
-**If this project helped you:**
-- ⭐ Star the repository on GitHub
-- 🐛 Report issues and bugs
-- 🔧 Contribute improvements
-- ☕ Feel free to consider donating if my work helped you! https://paypal.me/ErosNardi
-
-**For issues:**
-1. Check existing GitHub issues
-2. Review security considerations
-3. Test in isolated environment
-4. Provide detailed reproduction steps including UPS model
-5. Be patient - this is maintained on volunteer basis
-
-## Version Information
-
-- **Base Image**: Debian Bookworm Slim
-- **NUT Version**: Latest available from Debian repositories
-- **Architectures**: ARM32, ARM64, AMD64
-- **Update Schedule**: Automated monthly builds
+⭐ Star • 🐛 Issue • 🔧 PR • ☕ <https://paypal.me/ErosNardi>

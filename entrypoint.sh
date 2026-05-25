@@ -37,6 +37,7 @@ chgrp nut /etc/nut/* 2>/dev/null || true
 
 echo "Starting UPS driver..."
 upsdrvctl start
+trap 'echo "Stopping UPS driver..."; upsdrvctl stop' EXIT
 
 echo "Starting UPS daemon..."
-exec upsd -D
+exec upsd -F

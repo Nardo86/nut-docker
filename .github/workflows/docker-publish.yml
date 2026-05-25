@@ -52,6 +52,11 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value={{date 'YYYY.MM'}},enable={{is_default_branch}}
+            # Legacy aliases kept in sync with `latest` so users who pinned
+            # these 2021-era tags keep receiving the current multi-arch image.
+            type=raw,value=amd64-latest,enable={{is_default_branch}}
+            type=raw,value=arm64v8-latest,enable={{is_default_branch}}
+            type=raw,value=arm32v7-latest,enable={{is_default_branch}}
 
       - name: Build and push Docker image
         id: build-and-push
