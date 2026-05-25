@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 # Environment variables with defaults
 ENV TZ=Etc/UTC

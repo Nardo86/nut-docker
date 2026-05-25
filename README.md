@@ -151,7 +151,7 @@ This is a community project maintained on a volunteer basis.
 
 ## Version Information
 
-- **Base Image**: Debian Bullseye Slim
+- **Base Image**: Debian Bookworm Slim
 - **NUT Version**: Latest available from Debian repositories
 - **Architectures**: ARM32, ARM64, AMD64
 - **Update Schedule**: Automated monthly builds
